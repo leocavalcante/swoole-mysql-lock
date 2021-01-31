@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  mysql:
+    image: mysql:5.6
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: swoole_mysql_lock
+    volumes:
+      - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql

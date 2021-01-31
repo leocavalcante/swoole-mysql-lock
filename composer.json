@@ -1,0 +1,17 @@
+{
+    "name": "leocavalcante/swoole-mysql-lock",
+    "description": "Experimenting MySQL locks for concurrent Swoole processes",
+    "type": "project",
+    "require-dev": {
+        "swoole/ide-helper": "^4.6"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "leocavalcante",
+            "email": "lc@leocavalcante.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
