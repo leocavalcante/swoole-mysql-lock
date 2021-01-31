@@ -5,4 +5,6 @@ CREATE TABLE IF NOT EXISTS foo (
     ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-# INSERT INTO foo (bar) VALUES ('alice'), ('bob'), ('clair');
+TRUNCATE foo;
+INSERT INTO foo (bar) VALUES ('alice'), ('bob'), ('clair'), ('dean'), ('eva'), ('felip'), ('gaby');
+UPDATE foo SET baz = 0;

@@ -3,6 +3,7 @@
 namespace App;
 
 use Swoole\Constant;
+use Swoole\Coroutine;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server;
@@ -18,11 +19,26 @@ $server->on('workerStart', static function (Server $server, int $worker_id): voi
 
     $pdo = new \PDO('mysql:host=host.docker.internal;dbname=swoole_mysql_lock', 'root', 'secret');
 
-    $stmt = $pdo->query('select * from foo where baz = 0');
+    while (true) {
+        $pdo->beginTransaction();
 
-    $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $pdo->query('select * from foo where baz = 0 limit 2 for update');
 
-    echo "Worker #$worker_id => {$rows[0]['bar']}\n";
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (!empty($rows)) {
+            $ids = array_map(static fn (array $row): string => $row['id'], $rows);
+            $bar = array_map(static fn (array $row): string => $row['bar'], $rows);
+
+            printf("Worker #%d => %s\n", $worker_id, implode(', ', $bar));
+
+            $pdo->exec(sprintf('update foo set baz = 1 where id in (%s)', implode(',', $ids)));
+        }
+
+        $pdo->commit();
+
+        Coroutine::sleep(0.5);
+    }
 });
 
 $server->on('request', static function (Request $request, Response $response): void {});
